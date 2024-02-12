@@ -4,6 +4,7 @@ class Connect4:
         self.separator = '        '
         self.board = [[self.separator for k in range(7)] for i in range(6)]
         self.finished = False
+        self.line_length = 4
     def play(self, col):
         self.player = "Player 2" if self.player == "Player 1" else "Player 1"
         if self.finished:
@@ -16,7 +17,7 @@ class Connect4:
                 return "Column full!"
             row -= 1
         self.board[row][col] = self.player
-        # conditions
+        # winning conditions
         if(self.check_horizontal() or self.check_vertical() or self.check_diagonal_from_left() or self.check_diagonal_from_right()):
             self.finished = True
             return f"{self.player} wins!"
@@ -31,7 +32,7 @@ class Connect4:
                     combo += 1
                 else:
                     combo = 0
-                if combo == 3:
+                if combo == self.line_length-1:
                     print("ewfewf")
                     return True
             combo = 0
@@ -44,34 +45,22 @@ class Connect4:
                     combo += 1
                 else:
                     combo = 0
-                if combo == 3:
+                if combo == self.line_length-1:
                     return True
             combo = 0
         return False
     def check_diagonal_from_left(self):
         combo = 0
-        # 0 a a 4 a a a
-        # a 0 a a 4 a a
-        # 1 a 0 2 a 4 a
-        # a 1 a 0 2 a 4
-        # a a 1 a 0 2 a
-        # a a a 1 0 a 2
-        for i in range(len(self.board)-3):
-            for k in range(len(self.board[0])-3):
-                if (self.board[i][k] == self.board[i+1][k+1] == self.board[i+2][k+2] == self.board[i+3][k+3]) and self.board[i][k] != self.separator:
+        for i in range(len(self.board)-self.line_length+1):
+            for k in range(len(self.board[0])-self.line_length+1):
+                if all(self.board[i + j][k + j] == self.board[i][k] for j in range(4)) and self.board[i][k] != self.separator:
                     return True
         return False
     def check_diagonal_from_right(self):
         combo = 0
-        # a a a a a a a
-        # a a a a a a a
-        # a a a 1 a a a
-        # a a 1 a a a 4
-        # a 1 a a 0 a a
-        # 1 a a a 0 a a
-        for i in range(len(self.board)-3):
-            for k in range(len(self.board[0])-4, len(self.board[0])):
-                if (self.board[i][k] == self.board[i+1][k-1] == self.board[i+2][k-2] == self.board[i+3][k-3]) and self.board[i][k] != self.separator:
+        for i in range(len(self.board)-self.line_length+1):
+            for k in range(len(self.board[0])-self.line_length, len(self.board[0])):
+                if all([self.board[i][k] == self.board[i+j][k-j] for j in range(self.line_length)]) and self.board[i][k] != self.separator:
                     return True
         return False
 c = Connect4()
